@@ -1,0 +1,223 @@
+---
+#- name: Base
+#  hosts: all
+#  become: true
+#  become_user: root
+#  roles:
+#    - base
+
+- name: Openstack
+  hosts: controller[0]
+  become: true
+  become_user: root
+  vars:
+    - controller0: 192.168.56.7
+    - mariadb_version: 10.9
+#    - mysql_root_pass: Password1
+    - password: Password1
+    - login_password: Password1!
+    - keystone_pass_db: KEYSTONE_DBPASS
+    - root_pass: Rasmusnk1994
+    - glance_pass_db: GLANCE_DBPASS
+    - nova_dbpass: NOVA_DBPASS 
+#memcaches
+    - memcaches_url: https://memcached.org/files/memcached-1.6.17.tar.gz
+    - memcaches_tar: /tmp/memcached-1.6.17.tar.gz
+    - memcaches_location: /tmp/memcached-1.6.17
+    - RABBIT_PASS: Password1
+    - etcd_version: 3.5.5
+    - mariadb_dns: controller01
+#Keystone
+    - region: RegionOne
+    - bootstrap_password: ADMIN_PASS
+    - domainname: production
+    - domain_description: Production
+    - project_name: kubernetes
+    - project_desctiption: Kubernetes
+    - new_user_username: rasmus
+    - new_user_password: Password1
+#glance
+    - glance_password: GLANCE_PASSS
+    - regionname: regionone
+    - glance_reade_pass: Password1
+#Nova
+    - nova_password: NOVA_PASS
+    - management_ip: 192.168.56.7
+#Nova Compute
+    # qemu or kvm
+    - virt_type: qemu 
+#Placemens
+    - placement_pass: PLACEMENT_PASS
+    - placement_pass_db: PLACEMENT_DBPASS
+#neutron
+    - neutron_dbpass: NEUTRON_DBPASS
+    - neutron_pass: NEUTRON_PASS
+    - METADATA_SECRET: METADATA_SECRET
+#Cinder
+    - cinder_password: CINDER_PASS
+    - cinder_dbpass: CINDER_DBPASS
+  roles:
+#    - mariadb
+#    - memcaches
+#    - rabbitmq
+#    - etcd
+#    - keystone
+#    - glance
+#    - placement
+#    - nova-controller
+#    - neutron-controller
+    - cinder-controller
+
+#- name: Setup memcaches
+#  hosts: controller[0]
+#  become: true
+#  become_user: root
+#  vars:
+##    - rabbitmq_version: 1.6.17
+#    - memcaches_url: https://memcached.org/files/memcached-1.6.17.tar.gz
+#    - memcaches_tar: /tmp/memcached-1.6.17.tar.gz
+#    - memcaches_location: /tmp/memcached-1.6.17
+##    - memcaches_files: memcached-1.6.17.tar.gz
+#    - memcaches_ip: 192.168.56.7
+#  roles:
+#    - memcaches
+
+#- name: Setup rebbitmq
+#  hosts: controller[0]
+#  become: true 
+#  become_user: root
+#  vars:
+#    - RABBIT_PASS: Password1
+#  roles:
+#    - rabbitmq
+
+#- name: Setup etcd
+#  hosts: controller[0]
+#  become: true 
+#  become_user: root
+#  vars:
+#    - etcd_version: 3.5.5
+#    - controller0: 192.168.56.7
+#  roles:
+#    - etcd
+
+
+
+
+
+#- name: Setup NTP-Server
+#  hosts: ntp
+#  become: true
+#  become_user: root
+#  vars:
+#    - server0: 0.dk.pool.ntp.org
+#    - server1: 1.dk.pool.ntp.org
+#    - server2: 2.dk.pool.ntp.org
+#    - server3: 3.dk.pool.ntp.org
+#    - restrict_address: 10.200.0.0
+#    - restrict_netmask: 255.255.0.0
+#  roles:
+#    - ntp-server
+
+#- name: Setup NTP on hosts
+#  hosts: all, !ntp
+#  become: true
+#  become_user: root
+#  roles:
+#    - ntp-client
+  
+#- name: Setup DHCP master
+#  hosts: dhcp[0]
+#  become: true
+#  become_user: root
+#  roles:
+#    - dhcp_master
+
+#- name: Setup DHCP secondary
+#  hosts: dhcp[1]
+#  become: true
+#  become_user: root
+#  roles:
+#    - dhcp_secondary
+
+#- name: Setup HAproxy
+#  hosts: haproxy
+#  become: true
+#  become_user: root
+#  vars:
+#    - keepalived_pass: Dethererengodkode1234
+#    - virtual_ip: 192.168.56.7
+#  roles:
+#    - haproxy_marster
+
+#- name: Setup HAproxy
+#  hosts: haproxy
+#  become: true
+#  become_user: root
+#  vars:
+#    - keepalived_pass: Dethererengodkode1234
+#    - virtual_ip: 192.168.56.7
+#  roles:
+#    - haproxy_slave
+
+#- name: Setup mariadb galarear master
+#  hosts: controller[0]
+#  become: true
+#  become_user: root
+#  vars:
+#    - mariadb_version: 10.10
+#    - key_size: 4096
+#    - key_type: RSA
+#    - path: /lib/ca/
+#    - country_name: DK
+#    - organization_name: lab
+#    - email_address: lab@test.dk
+#    - password: Test1234!
+#  roles:
+#    - mariadb_master
+
+#- name: Setup mariadb galarear slave1
+#  hosts: controller[1]
+#  become: true
+#  become_user: root
+#  vars:
+#    - mariadb_version: 10.10
+#    - key_size: 4096
+#    - key_type: RSA
+#    - path: /lib/ca/
+#    - country_name: DK
+#    - organization_name: lab
+#    - email_address: lab@test.dk
+#  roles:
+#    - mariadb_slaves1
+
+#- name: Setup mariadb galarear slave2
+#  hosts: controller[2]
+#  become: true
+#  become_user: root
+#  vars:
+#    - mariadb_version: 10.10
+#    - key_size: 4096
+#    - key_type: RSA
+#    - path: /lib/ca/
+#    - country_name: DK
+#    - organization_name: lab
+#    - email_address: lab@test.dk
+#  roles:
+#    - mariadb_slaves2
+
+#- name: Setup Rabbitmq
+#  hosts: controller[0]
+#  become: true
+#  become_user: root
+#  roles:
+#    - rabbitmq_master
+
+
+
+#- name: Setup Rabbitmq
+#  hosts: controller, !controller[0]
+#  become: true
+#  become_user: root
+#  roles:
+#    - rabbitmq_secondary

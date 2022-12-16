@@ -1,0 +1,238 @@
+---
+- name: Install recomendet packet
+  apt:
+    name: 
+      - wget
+      - software-properties-common 
+      - dirmngr
+      - ca-certificates
+      - apt-transport-https
+    state: present
+
+- name: Download mariadb asc
+  ansible.builtin.command: wget  https://mariadb.org/mariadb_release_signing_key.asc 
+
+- name: Move asc to trusted.gpg.d
+  ansible.builtin.command: mv mariadb_release_signing_key.asc /etc/apt/trusted.gpg.d/
+
+- name: Promesion on mariadb asc
+  ansible.builtin.command: chmod -c 644 /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc
+
+- name: Add mariadb repo
+  ansible.builtin.command: echo "deb [arch=amd64,arm64,ppc64el] https://ftp.ubuntu-tw.org/mirror/mariadb/repo/{{ mariadb_version }}/debian bullseye main" > /etc/apt/sources.list.d/mariadb.list
+
+- name: Update repo
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install recomendet packet
+  apt:
+    name:
+      - python3-pexpect
+      - mariadb-client
+      - mariadb-server
+      - python3-pymysql
+    state: present
+
+- name: mysql_secure_installation 
+  script: ../files/mysql_secure_installation.sh
+
+#- name: mysql_secure_installation 
+#  script: "./templates/mysql_secure_installation.sh '{{ mysql_root_pass }}'" 
+
+#- name: Create mysql_secure_installation script
+#  template:
+#    src: ./templates/mysql_secure_installation.sh
+#    dest: /root
+#    mode: '0744'
+
+#- name: Run mysql_secure_installation
+#  script: /root/mysql_secure_installation.sh
+
+#- name: Run a script only if file.txt does not exist on the remote node
+#  ansible.builtin.script: /root/mysql_secure_installation.sh
+
+- name: Create DB user
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: rasmus
+    password: "{{ password }}"
+    priv: '*.*:ALL,GRANT'
+    tls_requires:
+      x509:
+
+- name: Config mariadb
+  template:
+    src: ./templates/99-openstack.cnf
+    dest: /etc/mysql/mariadb.conf.d/99-openstack.cnf
+
+- name: Create keystone DB
+  community.mysql.mysql_db:
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{ login_password }}"
+    name: keystone
+    state: present
+
+- name: Create keystone user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: keystone
+    password: "{{ keystone_pass_db }}"
+    priv:
+      'keystone.*': 'ALL,GRANT'
+
+- name: Create glance DB
+  community.mysql.mysql_db:
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{ login_password }}"
+    name: glance
+    state: present
+
+- name: Create glance user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: glance
+    password: "{{ glance_pass_db }}"
+    priv:
+      'glance.*': 'ALL,GRANT'
+
+- name: Create nova DB
+  community.mysql.mysql_db:
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{ login_password }}"
+    name: 
+      - nova_api
+      - nova
+      - nova_cell0
+    state: present
+
+
+- name: Create nova user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: nova
+    password: "{{ nova_dbpass }}"
+    priv:
+      'nova_api.*': 'ALL,GRANT'
+      'nova.*': 'ALL,GRANT'
+      'nova_cell0.*': 'ALL,GRANT'
+
+- name: Create placement DB
+  community.mysql.mysql_db:
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{ login_password }}"
+    name: placement
+    state: present
+
+- name: Create placement user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: placement
+    password: "{{ placement_pass_db }}"
+    priv:
+      'placement.*': 'ALL,GRANT'
+
+- name: Create neutron DB
+  community.mysql.mysql_db:
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{ login_password }}"
+    name: neutron
+    state: present
+
+- name: Create neutron user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: neutron
+    password: "{{ neutron_dbpass }}"
+    priv:
+      'neutron.*': 'ALL,GRANT'
+
+- name: Create cinder DB
+  community.mysql.mysql_db:
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{ login_password }}"
+    name: cinder
+    state: present
+
+- name: Create cinder user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ login_password }}"
+    state: present
+    name: cinder
+    password: "{{ cinder_dbpass }}"
+    priv:
+      'cinder.*': 'ALL,GRANT'
+
+- name: Restart mariadb
+  ansible.builtin.service:
+    name: mariadb
+    state: restarted
+
+- name: Enable mariadb
+  ansible.builtin.service:
+    name: mariadb
+    enabled: yes
+
+#- name: Config mariadb galera cluster
+#  template:
+#    src: ./templates/galera-master.conf
+#    dest: /etc/mysql/mariadb.conf.d/60-galera.cnf 
+#    owner: root
+#    group: root
+
+#- name: Create cert dir
+#  ansible.builtin.file:
+#    path: /lib/ca
+#    state: directory
+
+#- name: Generate an OpenSSL private key
+#  openssl_privatekey:
+#    path: "{{ path }}{{ groups['controller'][0] }}_privkey.pem"
+#    size: "{{ key_size }}"
+#    type: "{{ key_type }}"
+#    backup: yes
+
+#- name: Generate an OpenSSL Certificate Signing Request with Subject information
+#  openssl_csr:
+#    path: "{{ path }}{{ groups['controller'][0] }}.csr"
+#    privatekey_path: "{{ path }}{{ groups['controller'][0] }}_privkey.pem"
+#    country_name: "{{ country_name }}"
+#    organization_name: "{{ organization_name }}"
+#    email_address: "{{ email_address }}"
+#    common_name: "{{ groups['controller'][0] }}"
+
+#- name: Generate a Self Signed OpenSSL certificate server to server
+#  openssl_certificate:
+#    path: "{{ path }}{{ groups['controller'][0] }}_server_cert.pem"
+#    privatekey_path: "{{ path }}{{ groups['controller'][0] }}_privkey.pem"
+#    csr_path: "{{ path }}{{ groups['controller'][0] }}.csr"
+#    provider: selfsigned
+
+#- name: Generate a Self Signed OpenSSL certificate client
+#  openssl_certificate:
+#    path: "{{ path }}{{ groups['controller'][0] }}_client_cert.pem"
+#    privatekey_path: "{{ path }}{{ groups['controller'][0] }}_privkey.pem"
+#    csr_path: "{{ path }}{{ groups['controller'][0] }}.csr"
+#    provider: selfsigned
+
+#- name: Start cluster
+#  command: galera_new_cluster

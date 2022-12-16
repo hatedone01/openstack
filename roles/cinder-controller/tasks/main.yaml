@@ -1,0 +1,70 @@
+---
+- name: Create admin environment 
+  copy:
+    dest: /etc/environment
+    content: |
+      export OS_USERNAME=admin
+      export OS_PASSWORD={{ bootstrap_password }}
+      export OS_PROJECT_NAME=admin
+      export OS_USER_DOMAIN_NAME=Default
+      export OS_PROJECT_DOMAIN_NAME=Default
+      export OS_AUTH_URL=http://{{ mariadb_dns }}:5000/v3
+      export OS_IDENTITY_API_VERSION=3
+      export OS_IMAGE_API_VERSION=2
+
+- name: Create cinder user
+  command: openstack user create --domain default --password {{ cinder_password }} cinder
+
+- name: Add admin to cinder
+  command: openstack role add --project service --user cinder admin
+
+- name: Create conderv3 service
+  command: openstack service create --name cinderv3 --description "OpenStack Block Storage" volumev3
+
+- name: Create the Block Storage service API endpoints
+  command: "{{ item }}"
+  with_items:
+    - openstack endpoint create --region {{ region }} volumev3 public http://{{ mariadb_dns }}:8776/v3/%\(project_id\)s
+    - openstack endpoint create --region {{ region }} volumev3 internal http://{{ mariadb_dns }}:8776/v3/%\(project_id\)s
+    - openstack endpoint create --region {{ region }} volumev3 admin http://{{ mariadb_dns }}:8776/v3/%\(project_id\)s
+
+- name: Install cinder-api
+  ansible.builtin.apt:
+    name: cinder-api
+    state: present
+
+- name: Install cinder-scheduler
+  ansible.builtin.apt:
+    name: cinder-scheduler
+    state: present
+
+- name: Config cinder
+  ansible.builtin.template:
+    src: ./templates/cinder.conf
+    dest: /etc/cinder/cinder.conf
+    owner: root
+    group: cinder
+    mode: '0644'
+
+- name: Populate the Block Storage database
+  command: su -s /bin/sh -c "cinder-manage db sync" cinder
+
+- name: Restart cinder and apache2 services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - cinder-scheduler
+    - apache2
+
+#- name: Include cinder-compute role
+#  include_role:
+#    name: cinder-compute
+#    apply:
+#      delegate_to: "{{ item }}"
+#  with_items: "{{ groups['storages'] }}"
+
+#- name: Remove /etc/environment
+#  ansible.builtin.file:
+#    path: /etc/environment
+#    state: absent

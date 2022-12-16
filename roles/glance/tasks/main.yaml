@@ -1,0 +1,89 @@
+---
+- name: Create admin environment 
+  copy:
+    dest: /etc/environment
+    content: |
+      export OS_USERNAME=admin
+      export OS_PASSWORD={{ bootstrap_password }}
+      export OS_PROJECT_NAME=admin
+      export OS_USER_DOMAIN_NAME=Default
+      export OS_PROJECT_DOMAIN_NAME=Default
+      export OS_AUTH_URL=http://{{ mariadb_dns }}:5000/v3
+      export OS_IDENTITY_API_VERSION=3
+      export OS_IMAGE_API_VERSION=2
+
+- name: Admin token
+  command: openstack token issue
+
+- name: Create glance user
+  command: "{{ item }}"
+  register: glance
+  with_items:
+    - openstack user create --domain default --password {{ glance_password }} glance
+    - openstack user create --domain default --password {{ glance_reade_pass }} glance_reade
+
+- name: Print project
+  debug:
+    msg: "{{ glance.results }}"
+
+- name: Add admin roles to glance user
+  command: "{{ item }}"
+  with_items:
+    - openstack role add --project service --user glance admin
+    - openstack role add --user glance_reade --user-domain Default --system all reader
+
+- name: Create glance services entity
+  command: openstack service create --name glance --description "OpenStack Image" image
+
+- name: Create image service API endpoint 
+  command: "{{ item }}" 
+  with_items:
+    - openstack endpoint create --region {{ regionname }} image public http://{{ mariadb_dns }}:9292
+    - openstack endpoint create --region {{ regionname }} image internal http://{{ mariadb_dns }}:9292
+    - openstack endpoint create --region {{ regionname }} image admin http://{{ mariadb_dns }}:9292 
+
+- name: Install glance
+  ansible.builtin.apt:
+    name: glance
+    state: present
+
+- name: Config glance
+  ansible.builtin.template:
+    src: ./templates/glance-api.conf
+    dest: /etc/glance/glance-api.conf
+    owner: root
+    group: glance
+    mode: '0644'
+
+- name: Populate the Image service database
+  become: true
+  command: su -s /bin/sh -c "glance-manage db_sync" glance
+
+- name: Restart glance
+  ansible.builtin.service:
+    name: glance-api
+    state: restarted
+
+- name: Enable glance
+  ansible.builtin.service:
+    name: glance-api
+    enabled: yes
+
+- name: Download test image
+  get_url: url=http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img dest=/var/
+
+- name: Add test image to glance
+  command: glance image-create --name "cirros" --file /var/cirros-0.4.0-x86_64-disk.img --disk-format qcow2 --container-format bare --visibility=public
+
+- name: Get glance image list
+  command: glance image-list
+  register: image_list
+ 
+- name: Print project
+  debug:
+    msg: "{{ image_list.stdout }}"
+
+- name: Remove /etc/environment
+  ansible.builtin.file:
+    path: /etc/environment
+    state: absent

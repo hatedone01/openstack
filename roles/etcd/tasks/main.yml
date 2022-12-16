@@ -1,0 +1,77 @@
+---
+- name: Download ETCD
+  ansible.builtin.get_url:
+    url: https://github.com/etcd-io/etcd/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz
+    dest: /tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz
+    mode: '0440'
+
+- name: Extrat file 
+  ansible.builtin.unarchive:
+    src: /tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: mv etcd
+  ansible.builtin.copy:
+    src: /tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd
+    dest: /usr/bin/
+    mode: '0744'
+    remote_src: yes
+
+- name: mv etcdctl
+  ansible.builtin.copy:
+    src: /tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl
+    dest: /usr/bin/
+    mode: '0744'
+    remote_src: yes
+
+- name: mv etcdutl
+  ansible.builtin.copy:
+    src: /tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdutl
+    dest: /usr/bin/
+    mode: '0744'
+    remote_src: yes
+    
+- name: Make etcd exkutebul 
+  ansible.builtin.file:
+    path: /usr/bin/etcd
+    mode: '0755'
+
+- name: Make etcdctl exkutebul
+  ansible.builtin.file:
+    path: /usr/bin/etcdctl
+    mode: '0755'
+
+- name: Make etcdutl exkutebul
+  ansible.builtin.file:
+    path: /usr/bin/etcdutl
+#    owner: rasmus
+#    group: rasmus
+    mode: '0755'
+
+- name: Config ETCD
+  template:
+    src: ./templates/etcd.conf
+    dest: /etc/etcd
+
+- name: Copy etcd.service fil
+  ansible.builtin.copy:
+    src: ./files/etcd.service
+    dest: /etc/systemd/system/etcd.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start etcd
+  ansible.builtin.systemd:
+    state: started
+    name: etcd
+
+- name: Enable etcd
+  ansible.builtin.systemd:
+    name: etcd
+    enabled: yes
