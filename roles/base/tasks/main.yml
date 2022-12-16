@@ -1,8 +1,0 @@
----
-- name: Update repo
-  ansible.builtin.apt:
-    update_cache: yes
-
-- name: Upgrade os
-  ansible.builtin.apt:
-    upgrade: full
