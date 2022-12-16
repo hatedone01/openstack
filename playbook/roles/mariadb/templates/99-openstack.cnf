@@ -1,0 +1,9 @@
+[mysqld]
+{% for host in groups['controller'] %}
+bind-address =  {{hostvars[host]['ansible_hosts']}}
+{% endfor %}
+default-storage-engine = innodb
+innodb_file_per_table = on
+max_connections = 4096
+collation-server = utf8_general_ci
+character-set-server = utf8
