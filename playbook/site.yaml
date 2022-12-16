@@ -6,7 +6,7 @@
   vars:
     - DB_ROOT_PASS: Password1
   roles:
-#    - mariadb
+    - mariadb
 #    - memcaches
 #    - rabbitmq
 #    - etcd
@@ -15,4 +15,4 @@
 #    - placement
 #    - nova-controller
 #    - neutron-controller
-    - cinder-controller
+#    - cinder-controller
