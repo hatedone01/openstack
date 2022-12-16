@@ -18,7 +18,7 @@
 - name: test mysql_secure_installation
   mysql_secure_installation:
     login_password: ''
-    new_password: {{ DB_ROOT_PASS }}
+    new_password: "{{ DB_ROOT_PASS }}"
     user: root
     login_host: localhost
     hosts: ['localhost', '127.0.0.1', '::1']
