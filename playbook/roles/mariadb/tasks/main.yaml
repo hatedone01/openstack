@@ -35,7 +35,7 @@
 
   # mysql_secure_installation
 - name: Delete anonymous MySQL user
-  mysql_user: #name="" host={{item}} state=absent
+  mysql_user: 
     login_host: 'localhost'
     login_user: 'root'
     login_password: "{{ DB_ROOT_PASS }}"
@@ -48,11 +48,22 @@
 
   # mysql_secure_installation
 - name: Delete Hostname based MySQL user
-  mysql_user: name=root host="{{ansible_nodename}}" state=absent
+  mysql_user: #name=root host="{{ansible_nodename}}" state=absent
+    login_host: 'localhost'
+    login_user: 'root'
+    login_password: "{{ DB_ROOT_PASS }}"
+    name: 'root'
+    host: "{{ansible_nodename}}"
+    state: absent
 
   # mysql_secure_installation
 - name: Remove MySQL test database
-  mysql_db: name=test state=absent
+  mysql_db: #name=test state=absent
+    login_host: 'localhost'
+    login_user: 'root'
+    login_password: "{{ DB_ROOT_PASS }}"
+    name: 'test'
+    state: 'absent'
 
 - name: Create DB user
   community.mysql.mysql_user:
