@@ -15,12 +15,11 @@
     src: ./templates/99-openstack.cnf
     dest: /etc/mysql/mariadb.conf.d/99-openstack.cnf
 
-  # mysql_secure_installation
 - name: Update MariaDB root password
   mysql_user:
     login_host: 'localhost'
     login_user: 'root'
-    login_password: " "
+    login_unix_socket: /var/run/mysqld/mysqld.sock
     name: 'root'
     host: "{{ item }}"
     password: "{{ DB_ROOT_PASS }}"
@@ -30,10 +29,6 @@
     - ::1
     - localhost
 
-#- name: Set ~/.my.cnf file
-#  template: src=dotmy.cnf.j2 dest=/root/.my.cnf mode=0600
-
-  # mysql_secure_installation
 - name: Delete anonymous MySQL user
   mysql_user: 
     login_host: 'localhost'
@@ -46,9 +41,8 @@
     - localhost
     - "{{ansible_nodename}}"
 
-  # mysql_secure_installation
 - name: Delete Hostname based MySQL user
-  mysql_user: #name=root host="{{ansible_nodename}}" state=absent
+  mysql_user: 
     login_host: 'localhost'
     login_user: 'root'
     login_password: "{{ DB_ROOT_PASS }}"
@@ -56,9 +50,8 @@
     host: "{{ansible_nodename}}"
     state: absent
 
-  # mysql_secure_installation
 - name: Remove MySQL test database
-  mysql_db: #name=test state=absent
+  mysql_db:
     login_host: 'localhost'
     login_user: 'root'
     login_password: "{{ DB_ROOT_PASS }}"
@@ -91,49 +84,6 @@
       - neutron
       - cinder
     state: present
-
-#- name: Create glance DB
-#  community.mysql.mysql_db:
-#    check_implicit_admin: yes
-#    login_user: root
-#    login_password: "{{ DB_ROOT_PASS }}"
-#    name: glance
-#    state: present
-
-#- name: Create nova DB
-#  community.mysql.mysql_db:
-#    check_implicit_admin: yes
-#    login_user: root
-#    login_password: "{{ DB_ROOT_PASS }}"
-#    name: 
-#      - nova_api
-#      - nova
-#      - nova_cell0
-#    state: present
-
-#- name: Create placement DB
-#  community.mysql.mysql_db:
-#    check_implicit_admin: yes
-#    login_user: root
-#    login_password: "{{ DB_ROOT_PASS }}"
-#    name: placement
-#    state: present
-
-#- name: Create neutron DB
-#  community.mysql.mysql_db:
-#    check_implicit_admin: yes
-#    login_user: root
-#    login_password: "{{ DB_ROOT_PASS }}"
-#    name: neutron
-#    state: present
-
-#- name: Create cinder DB
-#  community.mysql.mysql_db:
-#    check_implicit_admin: yes
-#    login_user: root
-#    login_password: "{{ DB_ROOT_PASS }}"
-#    name: cinder
-#    state: present
 
 - name: Create keystone user 
   community.mysql.mysql_user:
