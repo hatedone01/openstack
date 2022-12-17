@@ -7,11 +7,9 @@
     state: present
 
 - name: Add memcaches ip to memcached.conf
-  ansible.builtin.lineinfile:
-    path:  /etc/memcached.conf
-    regexp: '^-l 127.0.0.1'
-    line: -l {{ item }}
-  with_items: "{{ hostvars[host]['ansible_hosts_mgmt'] }}"
+  template:
+    src: ./templates/memcached.conf
+    dest: /etc/memcached.conf
 
 - name: Start memcaches
   ansible.builtin.service:

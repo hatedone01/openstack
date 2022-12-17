@@ -21,8 +21,8 @@
 #Cinder
     - CINDER_DB_PASS: CINDER_DB_PASS
   roles:
-    - mariadb
-#    - memcaches
+#    - mariadb
+    - memcaches
 #    - rabbitmq
 #    - etcd
 #    - keystone
