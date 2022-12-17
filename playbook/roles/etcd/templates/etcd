@@ -13,7 +13,7 @@
 ## default: "default"
 # ETCD_NAME="default"
 {% for host in groups['controller'] %}
-ETCD_NAME= {{hostvars[host]}}
+ETCD_NAME= {{ host }}
 {% endfor %}
 ##### --data-dir
 ## Path to the data directory.
@@ -202,7 +202,7 @@ ETCD_INITIAL_ADVERTISE_PEER_URLS="{{hostvars[host]['ansible_hosts_mgmt_ip']}}:23
 # ETCD_INITIAL_CLUSTER="default=http://localhost:2380"
 # ETCD_INITIAL_CLUSTER="=http://localhost:2380"
 {% for host in groups['controller'] %}
-ETCD_INITIAL_CLUSTER="{{hostvars[host]['ansible_hosts_mgmt_ip']}}{{hostvars[host]['ansible_hosts_mgmt_ip']}}:2380"
+ETCD_INITIAL_CLUSTER="{{ host }}={{hostvars[host]['ansible_hosts_mgmt_ip']}}:2380"
 {% endfor %}
 ##### --initial-cluster-state
 ## Initial cluster state ("new" or "existing"). Set to `new` for all members
