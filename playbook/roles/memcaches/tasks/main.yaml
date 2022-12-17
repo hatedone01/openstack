@@ -11,12 +11,12 @@
     src: ./templates/memcached.conf
     dest: /etc/memcached.conf
 
-- name: Start memcaches
+- name: Start memcached
   ansible.builtin.service:
     name: memcached
     state: started
 
-- name: Enable memcaches
+- name: Enable memcached
   ansible.builtin.service:
     name: memcached
     enabled: yes

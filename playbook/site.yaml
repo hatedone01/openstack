@@ -8,6 +8,8 @@
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
     - DB_USER_PASS: Password1!
+#Rabbitmq
+    - RABBITMQ_PASS: RABBIT_PASS
 #Keystone
     - KEYSTONE_DB_PASS: KEYSTONE_DBPASS
 #Glance
@@ -22,8 +24,8 @@
     - CINDER_DB_PASS: CINDER_DB_PASS
   roles:
 #    - mariadb
-    - memcaches
-#    - rabbitmq
+#    - memcaches
+    - rabbitmq
 #    - etcd
 #    - keystone
 #    - glance
