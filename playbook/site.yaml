@@ -12,6 +12,8 @@
     - RABBITMQ_PASS: RABBIT_PASS
 #Keystone
     - KEYSTONE_DB_PASS: KEYSTONE_DBPASS
+#Etcd
+    - ETCD_TOKEN: new-cluster
 #Glance
     - GLANCE_DB_PASS: GLANCE_DBPASS
 #Nova
@@ -25,8 +27,8 @@
   roles:
 #    - mariadb
 #    - memcaches
-    - rabbitmq
-#    - etcd
+#    - rabbitmq
+    - etcd
 #    - keystone
 #    - glance
 #    - placement

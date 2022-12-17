@@ -1,5 +1,5 @@
 [controller]
-controller01 ansible_hosts_mgmt=10.200.140.11 
+controller01 ansible_hosts_mgmt_ip=10.200.140.11 
 
 [compute]
 compute01 ansible_hosts=192.168.56.8

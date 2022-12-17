@@ -6,7 +6,7 @@
       - python3-memcache
     state: present
 
-- name: Add memcaches ip to memcached.conf
+- name: Memcached template 
   template:
     src: ./templates/memcached.conf
     dest: /etc/memcached.conf
