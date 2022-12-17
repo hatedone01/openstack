@@ -4,7 +4,22 @@
   become: true
   become_user: root
   vars:
+#Mariadb
     - DB_ROOT_PASS: Password1
+    - DB_USER: rasmus
+    - DB_USER_PASS: Password1!
+#Keystone
+    - KEYSTONE_DB_PASS: KEYSTONE_DBPASS
+#Glance
+    - GLANCE_DB_PASS: GLANCE_DBPASS
+#Nova
+    - NOVA_DB_PASS: NOVA_DBPASS
+#Placement
+    - PLACEMENT_DB_PASS: PLACEMENT_DBPASS
+#Neutron
+    - NEUTRON_DB_PASS: NEUTRON_DBPASS
+#Cinder
+    - CINDER_DB_PASS: CINDER_DB_PASS
   roles:
     - mariadb
 #    - memcaches

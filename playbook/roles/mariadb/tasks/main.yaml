@@ -44,10 +44,10 @@
 - name: Create DB user
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
-    name: rasmus
-    password: "{{ password }}"
+    name: "{{ DB_USER }}"
+    password: "{{ DB_USER_PASS }}"
     priv: '*.*:ALL,GRANT'
     tls_requires:
       x509:
@@ -56,113 +56,120 @@
   community.mysql.mysql_db:
     check_implicit_admin: yes
     login_user: root
-    login_password: "{{ login_password }}"
-    name: keystone
+    login_password: "{{ DB_ROOT_PASS }}"
+    name: 
+      - keystone
+      - glance
+      - nova_api
+      - nova
+      - nova_cell0
+      - placement
+      - neutron
+      - cinder
     state: present
+
+#- name: Create glance DB
+#  community.mysql.mysql_db:
+#    check_implicit_admin: yes
+#    login_user: root
+#    login_password: "{{ DB_ROOT_PASS }}"
+#    name: glance
+#    state: present
+
+#- name: Create nova DB
+#  community.mysql.mysql_db:
+#    check_implicit_admin: yes
+#    login_user: root
+#    login_password: "{{ DB_ROOT_PASS }}"
+#    name: 
+#      - nova_api
+#      - nova
+#      - nova_cell0
+#    state: present
+
+#- name: Create placement DB
+#  community.mysql.mysql_db:
+#    check_implicit_admin: yes
+#    login_user: root
+#    login_password: "{{ DB_ROOT_PASS }}"
+#    name: placement
+#    state: present
+
+#- name: Create neutron DB
+#  community.mysql.mysql_db:
+#    check_implicit_admin: yes
+#    login_user: root
+#    login_password: "{{ DB_ROOT_PASS }}"
+#    name: neutron
+#    state: present
+
+#- name: Create cinder DB
+#  community.mysql.mysql_db:
+#    check_implicit_admin: yes
+#    login_user: root
+#    login_password: "{{ DB_ROOT_PASS }}"
+#    name: cinder
+#    state: present
 
 - name: Create keystone user 
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
     name: keystone
-    password: "{{ keystone_pass_db }}"
+    password: "{{ KEYSTONE_DB_PASS }}"
     priv:
       'keystone.*': 'ALL,GRANT'
-
-- name: Create glance DB
-  community.mysql.mysql_db:
-    check_implicit_admin: yes
-    login_user: root
-    login_password: "{{ login_password }}"
-    name: glance
-    state: present
 
 - name: Create glance user 
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
     name: glance
-    password: "{{ glance_pass_db }}"
+    password: "{{ GLANCE_DB_PASS }}"
     priv:
       'glance.*': 'ALL,GRANT'
-
-- name: Create nova DB
-  community.mysql.mysql_db:
-    check_implicit_admin: yes
-    login_user: root
-    login_password: "{{ login_password }}"
-    name: 
-      - nova_api
-      - nova
-      - nova_cell0
-    state: present
-
 
 - name: Create nova user 
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
     name: nova
-    password: "{{ nova_dbpass }}"
+    password: "{{ NOVA_DB_PASS }}"
     priv:
       'nova_api.*': 'ALL,GRANT'
       'nova.*': 'ALL,GRANT'
       'nova_cell0.*': 'ALL,GRANT'
 
-- name: Create placement DB
-  community.mysql.mysql_db:
-    check_implicit_admin: yes
-    login_user: root
-    login_password: "{{ login_password }}"
-    name: placement
-    state: present
-
 - name: Create placement user 
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
     name: placement
-    password: "{{ placement_pass_db }}"
+    password: "{{ PLACEMENT_DB_PASS }}"
     priv:
       'placement.*': 'ALL,GRANT'
-
-- name: Create neutron DB
-  community.mysql.mysql_db:
-    check_implicit_admin: yes
-    login_user: root
-    login_password: "{{ login_password }}"
-    name: neutron
-    state: present
 
 - name: Create neutron user 
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
     name: neutron
-    password: "{{ neutron_dbpass }}"
+    password: "{{ NEUTRON_DB_PASS }}"
     priv:
       'neutron.*': 'ALL,GRANT'
-
-- name: Create cinder DB
-  community.mysql.mysql_db:
-    check_implicit_admin: yes
-    login_user: root
-    login_password: "{{ login_password }}"
-    name: cinder
-    state: present
 
 - name: Create cinder user 
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ login_password }}"
+    login_password: "{{ DB_ROOT_PASS }}"
     state: present
     name: cinder
-    password: "{{ cinder_dbpass }}"
+    password: "{{ CINDER_DB_PASS }}"
     priv:
       'cinder.*': 'ALL,GRANT'
 
