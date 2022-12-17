@@ -4,6 +4,9 @@
   become: true
   become_user: root
   vars:
+#DNS
+    - MARIADB_DNS: controller01
+    - KEYSTONE_DNS: controller01
 #Mariadb
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
@@ -12,6 +15,14 @@
     - RABBITMQ_PASS: RABBIT_PASS
 #Keystone
     - KEYSTONE_DB_PASS: KEYSTONE_DBPASS
+    - ADMIN_PASS: ADMIN_PASS
+    - REGION: RegionOne
+    - DOMAIN: TestCompany
+    - DOMAIN_DESCRIPTION: TestCompany domain 
+    - PROJECT_DESCRIPTION: production project
+    - PROJECT_NAME: production
+    - USER_PASS: Password1
+    - USERNAME: Test
 #Etcd
     - ETCD_TOKEN: new-cluster
 #Glance
@@ -28,8 +39,8 @@
 #    - mariadb
 #    - memcaches
 #    - rabbitmq
-    - etcd
-#    - keystone
+#    - etcd
+    - keystone
 #    - glance
 #    - placement
 #    - nova-controller
