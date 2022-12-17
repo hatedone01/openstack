@@ -23,7 +23,7 @@
     - keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
 
 - name: Bootstrap the Identity service
-  shell: keystone-manage bootstrap --bootstrap-password "{{ ADMIN_PASS }}" --bootstrap-admin-url http://"{{ KEYSTONE_DNS }}":5000/v3/ --bootstrap-internal-url http://"{{ KEYSTONE_DNS }}":5000/v3/ --bootstrap-public-url http://"{{ KEYSTONE_DNS }}":5000/v3/ --bootstrap-region-id {{ REGION }}
+  shell: keystone-manage bootstrap --bootstrap-password {{ ADMIN_PASS }} --bootstrap-admin-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-internal-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-public-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-region-id {{ REGION }}
 
 - name: Config apache2
   template:
