@@ -17,11 +17,26 @@
 
   # mysql_secure_installation
 - name: Update MariaDB root password
-  mysql_user: name=root host={{item}} password={{DB_ROOT_PASS}}
+  mysql_user: 
+    login_user: root
+    login_password: ""
+    name: root
+    host: "{{ item }}"
+    password: "{{ DB_ROOT_PASS }}"
   with_items:
     - 127.0.0.1
     - ::1
     - localhost
+
+- name: Create keystone user 
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ DB_ROOT_PASS }}"
+    state: present
+    name: keystone
+    password: "{{ KEYSTONE_DB_PASS }}"
+    priv:
+      'keystone.*': 'ALL,GRANT'
 
 #- name: Set ~/.my.cnf file
 #  template: src=dotmy.cnf.j2 dest=/root/.my.cnf mode=0600
