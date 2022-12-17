@@ -77,12 +77,14 @@
     msg: "{{ project.results }}"
 
 - name: Create user
-  command: openstack user create --domain {{ DOMAIN }} --password {{ USER_PASS }} {{ USERNAME }}
-  register: user
+  command: "{{ item }}"
+  with_items:
+    - openstack user create --domain {{ DOMAIN }} --password {{ USER_PASS }} {{ USERNAME }}
+  register: users
 
 - name: Print user
   debug:
-    msg: "{{ user.results }}"
+    msg: "{{ users.results }}"
 
 - name: Create role
   command: openstack role create admin-{{ PROJECT_NAME }}
