@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     update_cache: yes
 
-- name: Install recomendet packet
+- name: Install mariadb packet
   apt:
     name:
       - mariadb-server 
