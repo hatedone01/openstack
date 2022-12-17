@@ -1,0 +1,20 @@
+---
+- name: Install commem packet
+  ansible.builtin.package:
+    name: etcd
+    state: present
+
+- name: ETCD config
+  template:
+    src: ./templates/etcd
+    dest: /etc/default/etcd
+
+- name: Start etcd
+  ansible.builtin.service:
+    name: etcd
+    state: restarted
+
+- name: Enable etcd
+  ansible.builtin.service:
+    name: etcd
+    enabled: yes
