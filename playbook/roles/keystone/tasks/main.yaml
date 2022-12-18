@@ -1,80 +1,80 @@
 ---
-#- name: Install keystone
-#  apt:
-#    name: "{{ item }}"
-#  with_items: 
-#      - keystone
-#      - python3-openstackclient
+- name: Install keystone
+  apt:
+    name: "{{ item }}"
+  with_items: 
+      - keystone
+      - python3-openstackclient
 
-#- name: Config keystone
-#  template:
-#    src: ./templates/keystone.conf
-#    dest: /etc/keystone/keystone.conf
-#    owner: keystone
-#    group: keystone
+- name: Config keystone
+  template:
+    src: ./templates/keystone.conf
+    dest: /etc/keystone/keystone.conf
+    owner: keystone
+    group: keystone
 
-#- name: Run Populate the Identity service database
-#  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
+- name: Run Populate the Identity service database
+  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
 
-#- name: Initialize Fernet key repositories
-#  shell: "{{ item }}"
-#  with_items:
-#    - keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-#    - keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+- name: Initialize Fernet key repositories
+  shell: "{{ item }}"
+  with_items:
+    - keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+    - keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
 
-#- name: Bootstrap the Identity service
-#  shell: keystone-manage bootstrap --bootstrap-password {{ ADMIN_PASS }} --bootstrap-admin-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-internal-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-public-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-region-id {{ REGION }}
+- name: Bootstrap the Identity service
+  shell: keystone-manage bootstrap --bootstrap-password {{ ADMIN_PASS }} --bootstrap-admin-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-internal-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-public-url http://{{ KEYSTONE_DNS }}:5000/v3/ --bootstrap-region-id {{ REGION }}
 
-#- name: Config apache2
-#  template:
-#    src: ./templates/apache2.conf
-#    dest: /etc/apache2/apache2.conf
-#    owner: root
-#    group: root
+- name: Config apache2
+  template:
+    src: ./templates/apache2.conf
+    dest: /etc/apache2/apache2.conf
+    owner: root
+    group: root
 
-#- name: Restart apache2
-#  ansible.builtin.service:
-#    name: apache2
-#    state: restarted
+- name: Restart apache2
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
 
-#- name: Restart apache2
-#  ansible.builtin.service:
-#    name: apache2
-#    enabled: yes
+- name: Restart apache2
+  ansible.builtin.service:
+    name: apache2
+    enabled: yes
 
-#- name: Customize /etc/environment environment file
-#  ansible.builtin.lineinfile:
-#    dest: /etc/environment
-#    state: present
-#    regexp: "^{{ item }}"
-#    line: "{{ item }}"
-#  with_items:
-#    - OS_USERNAME=admin
-#    - OS_PASSWORD={{ ADMIN_PASS }}
-#    - OS_PROJECT_NAME=admin
-#    - OS_USER_DOMAIN_NAME=Default
-#    - OS_PROJECT_DOMAIN_NAME=Default
-#    - OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
-#    - OS_IDENTITY_API_VERSION=3
+- name: Customize /etc/environment environment file
+  ansible.builtin.lineinfile:
+    dest: /etc/environment
+    state: present
+    regexp: "^{{ item }}"
+    line: "{{ item }}"
+  with_items:
+    - OS_USERNAME=admin
+    - OS_PASSWORD={{ ADMIN_PASS }}
+    - OS_PROJECT_NAME=admin
+    - OS_USER_DOMAIN_NAME=Default
+    - OS_PROJECT_DOMAIN_NAME=Default
+    - OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
+    - OS_IDENTITY_API_VERSION=3
 
-#- name: Create openstack domain
-#  command: openstack domain create --description "{{ DOMAIN_DESCRIPTION }}" {{ DOMAIN }}
-#  register: openstack_domain
+- name: Create openstack domain
+  command: openstack domain create --description "{{ DOMAIN_DESCRIPTION }}" {{ DOMAIN }}
+  register: openstack_domain
 
-#- name: Print openstack domain
-#  debug:
-#    msg: "{{ openstack_domain.stdout }}"
+- name: Print openstack domain
+  debug:
+    msg: "{{ openstack_domain.stdout }}"
 
-#- name: Create project 
-#  command: "{{ item }}"
-#  with_items:
-#    - openstack project create --domain default --description "Service Project" service 
-#    - openstack project create --domain {{ DOMAIN }} --description "{{ PROJECT_DESCRIPTION }}" {{ PROJECT_NAME }}
-#  register: project
+- name: Create project 
+  command: "{{ item }}"
+  with_items:
+    - openstack project create --domain default --description "Service Project" service 
+    - openstack project create --domain {{ DOMAIN }} --description "{{ PROJECT_DESCRIPTION }}" {{ PROJECT_NAME }}
+  register: project
 
-#- name: Print project
-#  debug:
-#    msg: "{{ project.results }}"
+- name: Print project
+  debug:
+    msg: "{{ project.results }}"
 
 - name: Create user
   command: "{{ item }}"
@@ -88,13 +88,13 @@
   debug:
     msg: "{{ users.results }}"
 
-#- name: Create role
-#  command: openstack role create admin-{{ PROJECT_NAME }}
-#  register: roles
+- name: Create role
+  command: openstack role create admin-{{ PROJECT_NAME }}
+  register: roles
 
-#- name: Print roles
-#  debug:
-#    msg: "{{ roles.stdout }}"
+- name: Print roles
+  debug:
+    msg: "{{ roles.stdout }}"
 
 - name: Add roles to user
   command: "{{ item }}"
@@ -148,28 +148,28 @@
   debug:
     msg: "{{ token.results }}"
 
-#- name: Create admin environment script
-#  copy:
-#    dest: /var/openstack-admin.sh
-#    content: |
-#      export OS_USERNAME=admin
-#      export OS_PASSWORD={{ ADMIN_PASS }}
-#      export OS_PROJECT_NAME=admin
-#      export OS_USER_DOMAIN_NAME=Default
-#      export OS_PROJECT_DOMAIN_NAME=Default
-#      export OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
-#      export OS_IDENTITY_API_VERSION=3
-#      export OS_IMAGE_API_VERSION=2
+- name: Create admin environment script
+  copy:
+    dest: /var/openstack-admin.sh
+    content: |
+      export OS_USERNAME=admin
+      export OS_PASSWORD={{ ADMIN_PASS }}
+      export OS_PROJECT_NAME=admin
+      export OS_USER_DOMAIN_NAME=Default
+      export OS_PROJECT_DOMAIN_NAME=Default
+      export OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
+      export OS_IDENTITY_API_VERSION=3
+      export OS_IMAGE_API_VERSION=2
 
-#- name: Create {{ PROJECT_NAME }} environment script
-#  copy:
-#    dest: /var/openstack-{{ PROJECT_NAME }}.sh
-#    content: |
-#      export OS_USERNAME={{ USERNAME }}
-#      export OS_PASSWORD={{ USER_PASS }}
-#      export OS_PROJECT_NAME={{ PROJECT_NAME }}
-#      export OS_USER_DOMAIN_NAME={{ DOMAIN }}
-#      export OS_PROJECT_DOMAIN_NAME={{ DOMAIN }}
-#      export OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
-#      export OS_IDENTITY_API_VERSION=3
-#      export OS_IMAGE_API_VERSION=2
+- name: Create {{ PROJECT_NAME }} environment script
+  copy:
+    dest: /var/openstack-{{ PROJECT_NAME }}.sh
+    content: |
+      export OS_USERNAME={{ USERNAME }}
+      export OS_PASSWORD={{ USER_PASS }}
+      export OS_PROJECT_NAME={{ PROJECT_NAME }}
+      export OS_USER_DOMAIN_NAME={{ DOMAIN }}
+      export OS_PROJECT_DOMAIN_NAME={{ DOMAIN }}
+      export OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
+      export OS_IDENTITY_API_VERSION=3
+      export OS_IMAGE_API_VERSION=2

@@ -43,7 +43,7 @@
 #    - memcaches
 #    - rabbitmq
 #    - etcd
-    - keystone
+#    - keystone
     - glance
 #    - placement
 #    - nova-controller
