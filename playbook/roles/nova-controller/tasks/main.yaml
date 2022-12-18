@@ -8,7 +8,7 @@
     - nova-novncproxy
     - nova-scheduler
 
-- name: Config glance
+- name: Config nova
   ansible.builtin.template:
     src: ./templates/nova.conf
     dest: /etc/nova/nova.conf
