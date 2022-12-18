@@ -148,21 +148,18 @@
   debug:
     msg: "{{ token.results }}"
 
-- name: Customize /etc/environment environment file
-  ansible.builtin.lineinfile:
+- name: Create admin environment 
+  copy:
     dest: /etc/environment
-    state: present
-    regexp: "^{{ item }}"
-    line: "{{ item }}"
-  with_items:
-    - OS_USERNAME=admin
-    - OS_PASSWORD={{ ADMIN_PASS }}
-    - OS_PROJECT_NAME=admin
-    - OS_USER_DOMAIN_NAME=Default
-    - OS_PROJECT_DOMAIN_NAME=Default
-    - OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
-    - OS_IDENTITY_API_VERSION=3
-    - OS_IMAGE_API_VERSION=2
+    content: |
+      export OS_USERNAME=admin
+      export OS_PASSWORD={{ ADMIN_PASS }}
+      export OS_PROJECT_NAME=admin
+      export OS_USER_DOMAIN_NAME=Default
+      export OS_PROJECT_DOMAIN_NAME=Default
+      export OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
+      export OS_IDENTITY_API_VERSION=3
+      export OS_IMAGE_API_VERSION=2
 
 - name: Create admin environment script
   copy:
