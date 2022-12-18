@@ -1,0 +1,41 @@
+---
+- name: Install placement pacektes
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-pip
+    - placement-api
+
+- name: Config glance
+  ansible.builtin.template:
+    src: ./templates/placement.conf
+    dest: /etc/placement/placement.conf
+    owner: root
+    group: placement
+    mode: '0644'
+
+- name: Populate the placement database
+  command: su -s /bin/sh -c "placement-manage db sync" placement
+
+- name: Restart apache2
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
+
+- name: Placement status checks
+  command: placement-status upgrade check
+
+- name: PIP3 install osc-placement
+  command: pip3 install osc-placement
+
+- name: List available resource
+  register: resource
+  command: "{{ item }}"
+  with_items:
+    - openstack --os-placement-api-version 1.2 resource class list --sort-column name
+    - openstack --os-placement-api-version 1.6 trait list --sort-column name
+
+- name: Print project
+  debug:
+    msg: "{{ resource.results }}"
