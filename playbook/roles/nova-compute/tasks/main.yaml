@@ -1,0 +1,35 @@
+---
+- name: Update repo
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install nova-compute
+  ansible.builtin.apt:
+    name: nova-compute
+    state: present
+
+- name: Config nova
+  ansible.builtin.template:
+    src: ./templates/nova.conf
+    dest: /etc/nova/nova.conf
+    owner: root
+    group: nova
+    mode: '0644'
+
+- name: Config nova-compute
+  ansible.builtin.template:
+    src: ./templates/nova-compute.conf
+    dest: /etc/nova/nova-compute.conf
+    owner: root
+    group: nova
+    mode: '0644'
+
+- name: Restart nova-compute
+  ansible.builtin.service:
+    name: nova-compute
+    state: restarted
+
+- name: Enable nova-compute
+  ansible.builtin.service:
+    name: nova-compute
+    enabled: yes

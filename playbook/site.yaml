@@ -35,6 +35,8 @@
 #Nova
     - NOVA_DB_PASS: NOVA_DBPASS
     - NOVA_PASS: NOVA_PASS
+    # qemu or kvm
+    - VIRT_TYPE: qemu 
 #Placement
     - PLACEMENT_DB_PASS: PLACEMENT_DBPASS
     - PLACEMENT_PASS: PLACEMENT_PASS
