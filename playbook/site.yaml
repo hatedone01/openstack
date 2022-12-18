@@ -9,6 +9,7 @@
     - KEYSTONE_DNS: controller01
     - GLANCE_DNS: controller01
     - PLACEMENT_DNS: controller01
+    - NOVA_DNS: controller01
 #Mariadb
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
@@ -33,6 +34,7 @@
     - GLANCE_USER_READ_PASS: GLANCE_READ_PASS
 #Nova
     - NOVA_DB_PASS: NOVA_DBPASS
+    - NOVA_PASS: NOVA_PASS
 #Placement
     - PLACEMENT_DB_PASS: PLACEMENT_DBPASS
     - PLACEMENT_PASS: PLACEMENT_PASS
@@ -45,9 +47,9 @@
 #    - memcaches
 #    - rabbitmq
 #    - etcd
-#    - keystone
-#    - glance
+    - keystone
+    - glance
     - placement
-#    - nova-controller
+    - nova-controller
 #    - neutron-controller
 #    - cinder-controller

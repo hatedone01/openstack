@@ -1,0 +1,109 @@
+- name: Install nova pacektes
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nova-api
+    - nova-conductor
+    - nova-novncproxy
+    - nova-scheduler
+
+- name: Config glance
+  ansible.builtin.template:
+    src: ./templates/nova.conf
+    dest: /etc/nova/nova.conf
+    owner: root
+    group: nova
+    mode: '0644'
+
+- name: Pubaliet nova-api db
+  command: su -s /bin/sh -c "nova-manage api_db sync" nova
+  register: pubedb
+
+- name: Print pubeliat db
+  debug:
+    msg: "{{ pubedb.stdout }}"
+
+- name: Register the cell0 database
+  command: su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
+  register: cell0db
+
+- name: Print cell0 database
+  debug:
+    msg: "{{ cell0db.stdout }}"
+
+- name: Register the cell1  
+  command: su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
+  register: cell1
+
+- name: Print cell1 
+  debug:
+    msg: "{{ cell1.stdout }}"
+
+- name: Populate the nova database 
+  command: su -s /bin/sh -c "nova-manage db sync" nova
+  register: pubdb
+
+- name: Print the nova database
+  debug:
+    msg: "{{ pubdb.stdout }}"
+
+- name: Verify nova cell0 and cell1 
+  command: su -s /bin/sh -c "nova-manage cell_v2 list_cells" nova
+  register: verify
+  
+- name: Print nova cell0 and cell1
+  debug:
+    msg: "{{ verify.stdout }}"
+
+- name: Restart nova services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - nova-api
+    - nova-scheduler
+    - nova-conductor
+    - nova-novncproxy
+
+- name: Enable mariadb
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - nova-api
+    - nova-scheduler
+    - nova-conductor
+    - nova-novncproxy
+
+- name: Include nova-compute role
+  include_role:
+    name: nova-compute
+    apply:
+      delegate_to: "{{ item }}"
+  with_items: "{{ groups['compute'] }}"
+
+- name: Pause for 1 minit 
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Enable admin-only CLI commands
+  command: openstack compute service list --service nova-compute
+  register: shownovecompute
+
+- name: Print nova admin-only
+  debug:
+    msg: "{{ shownovecompute.stdout }}"
+
+- name: Discover compute hosts
+  command: su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
+  register: discover
+
+- name: Print nova admin-only
+  debug:
+    msg: "{{ discover.stdout }}"
+
+- name: Remove /etc/environment
+  ansible.builtin.file:
+    path: /etc/environment
+    state: absent
