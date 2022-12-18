@@ -1,0 +1,45 @@
+- name: Install glance
+  ansible.builtin.apt:
+    name: glance
+    state: present
+
+- name: Config glance
+  ansible.builtin.template:
+    src: ./templates/glance-api.conf
+    dest: /etc/glance/glance-api.conf
+    owner: root
+    group: glance
+    mode: '0644'
+
+- name: Populate the Image service database
+  become: true
+  command: su -s /bin/sh -c "glance-manage db_sync" glance
+
+- name: Restart glance
+  ansible.builtin.service:
+    name: glance-api
+    state: restarted
+
+- name: Enable glance
+  ansible.builtin.service:
+    name: glance-api
+    enabled: yes
+
+- name: Download test image
+  get_url: url=http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img dest=/var/
+
+- name: Add test image to glance
+  command: glance image-create --name "cirros" --file /var/cirros-0.4.0-x86_64-disk.img --disk-format qcow2 --container-format bare --visibility=public
+
+- name: Get glance image list
+  command: glance image-list
+  register: image_list
+ 
+- name: Print project
+  debug:
+    msg: "{{ image_list.stdout }}"
+
+- name: Remove /etc/environment
+  ansible.builtin.file:
+    path: /etc/environment
+    state: absent
