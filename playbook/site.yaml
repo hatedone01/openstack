@@ -8,6 +8,7 @@
     - MARIADB_DNS: controller01
     - KEYSTONE_DNS: controller01
     - GLANCE_DNS: controller01
+    - PLACEMENT_DNS: controller01
 #Mariadb
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
@@ -34,6 +35,7 @@
     - NOVA_DB_PASS: NOVA_DBPASS
 #Placement
     - PLACEMENT_DB_PASS: PLACEMENT_DBPASS
+    - PLACEMENT_PASS: PLACEMENT_PASS
 #Neutron
     - NEUTRON_DB_PASS: NEUTRON_DBPASS
 #Cinder
@@ -44,8 +46,8 @@
 #    - rabbitmq
 #    - etcd
 #    - keystone
-    - glance
-#    - placement
+#    - glance
+    - placement
 #    - nova-controller
 #    - neutron-controller
 #    - cinder-controller

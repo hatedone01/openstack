@@ -38,8 +38,3 @@
 - name: Print project
   debug:
     msg: "{{ image_list.stdout }}"
-
-- name: Remove /etc/environment
-  ansible.builtin.file:
-    path: /etc/environment
-    state: absent
