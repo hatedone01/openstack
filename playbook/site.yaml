@@ -7,6 +7,7 @@
 #DNS
     - MARIADB_DNS: controller01
     - KEYSTONE_DNS: controller01
+    - GLANCE_DNS: controller01
 #Mariadb
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
@@ -27,6 +28,8 @@
     - ETCD_TOKEN: new-cluster
 #Glance
     - GLANCE_DB_PASS: GLANCE_DBPASS
+    - GLANCE_USER_PASS: GLANCE_PASS
+    - GLANCE_USER_READ_PASS: GLANCE_READ_PASS
 #Nova
     - NOVA_DB_PASS: NOVA_DBPASS
 #Placement
@@ -41,7 +44,7 @@
 #    - rabbitmq
 #    - etcd
     - keystone
-#    - glance
+    - glance
 #    - placement
 #    - nova-controller
 #    - neutron-controller

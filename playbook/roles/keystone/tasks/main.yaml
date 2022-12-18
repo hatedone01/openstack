@@ -80,6 +80,8 @@
   command: "{{ item }}"
   with_items:
     - openstack user create --domain {{ DOMAIN }} --password {{ USER_PASS }} {{ USERNAME }}
+    - openstack user create --domain default --password {{ GLANCE_USER_PASS }} glance
+    - openstack user create --domain default --password {{ GLANCE_USER_READ_PASS }} glance_reade
   register: users
 
 - name: Print user
@@ -95,7 +97,37 @@
     msg: "{{ roles.stdout }}"
 
 - name: Add roles to user
-  command: openstack role add --project {{ PROJECT_NAME }} --user {{ USERNAME }} admin-{{ PROJECT_NAME }}
+  command: "{{ item }}"
+  with_items:
+    - openstack role add --project {{ PROJECT_NAME }} --user {{ USERNAME }} admin-{{ PROJECT_NAME }}
+    - openstack role add --project service --user glance admin
+    - openstack role add --user glance_reade --user-domain Default --system all reader
+
+- name: Create services entity
+  command: "{{ item }}" 
+  with_items:
+    - openstack service create --name glance --description "OpenStack Image" image
+  register: services
+
+- name: Print roles
+  debug:
+    msg: "{{ services.stdout }}"
+
+- name: Create API endpoint
+  command: "{{ item }}" 
+  with_items:
+    - openstack endpoint create --region {{ REGION }} image public http://{{ GLANCE_DNS }}:9292
+    - openstack endpoint create --region {{ REGION }} image internal http://{{ GLANCE_DNS }}:9292
+    - openstack endpoint create --region {{ REGION }} image admin http://{{ GLANCE_DNS }}:9292
+  register: services
+
+- name: Print roles
+  debug:
+    msg: "{{ services.results }}"
+
+
+
+
 
 - name: Remove variabel 
   shell: unset OS_AUTH_URL OS_PASSWORD
