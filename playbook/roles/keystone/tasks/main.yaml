@@ -109,9 +109,9 @@
     - openstack service create --name glance --description "OpenStack Image" image
   register: services
 
-- name: Print roles
+- name: Print services 
   debug:
-    msg: "{{ services.stdout }}"
+    msg: "{{ services.results }}"
 
 - name: Create API endpoint
   command: "{{ item }}" 
@@ -147,6 +147,22 @@
 - name: Print tokens
   debug:
     msg: "{{ token.results }}"
+
+- name: Customize /etc/environment environment file
+  ansible.builtin.lineinfile:
+    dest: /etc/environment
+    state: present
+    regexp: "^{{ item }}"
+    line: "{{ item }}"
+  with_items:
+    - OS_USERNAME=admin
+    - OS_PASSWORD={{ ADMIN_PASS }}
+    - OS_PROJECT_NAME=admin
+    - OS_USER_DOMAIN_NAME=Default
+    - OS_PROJECT_DOMAIN_NAME=Default
+    - OS_AUTH_URL=http://{{ KEYSTONE_DNS }}:5000/v3
+    - OS_IDENTITY_API_VERSION=3
+    - OS_IMAGE_API_VERSION=2
 
 - name: Create admin environment script
   copy:
