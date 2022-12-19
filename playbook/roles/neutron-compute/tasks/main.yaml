@@ -1,0 +1,26 @@
+---
+- name: Install nova pacektes
+  ansible.builtin.apt:
+    name: neutron-linuxbridge-agent
+    state: present
+
+- name: Config neutron.conf
+  ansible.builtin.template:
+    src: ./templates/neutron.conf
+    dest: /etc/neutron/neutron.conf
+    owner: root
+    group: neutron
+    mode: '0644'
+
+- name: Config linuxbridge_agent.ini
+  ansible.builtin.template:
+    src: ./templates/linuxbridge_agent.ini
+    dest: /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+    owner: root
+    group: neutron
+    mode: '0644'
+
+- name: Restart nova services
+  ansible.builtin.service:
+    name: neutron-linuxbridge-agent
+    state: restarted
