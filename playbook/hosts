@@ -1,8 +1,8 @@
 [controller]
-controller01 ansible_hosts_mgmt_ip=10.200.140.11 
+controller01 ansible_hosts_mgmt_ip=10.200.140.11 ansible_hosts_mgmt_int=ens160
 
 [compute]
-compute01 ansible_hosts_mgmt_ip=10.200.140.21 
+compute01 ansible_hosts_mgmt_ip=10.200.140.21 ansible_hosts_mgmt_int=ens160
 
 [storages]
 block01 ansible_hosts=192.168.56.9

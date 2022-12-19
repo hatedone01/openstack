@@ -102,8 +102,3 @@
 - name: Print nova admin-only
   debug:
     msg: "{{ discover.stdout }}"
-
-- name: Remove /etc/environment
-  ansible.builtin.file:
-    path: /etc/environment
-    state: absent

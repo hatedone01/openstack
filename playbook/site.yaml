@@ -10,6 +10,7 @@
     - GLANCE_DNS: controller01
     - PLACEMENT_DNS: controller01
     - NOVA_DNS: controller01
+    - NEUTRON_DNS: controller01
 #Mariadb
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
