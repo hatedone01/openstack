@@ -56,5 +56,5 @@
     - glance
     - placement
     - nova-controller
-#    - neutron-controller
+    - neutron-controller
 #    - cinder-controller

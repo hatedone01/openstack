@@ -11,7 +11,7 @@
     - neutron-dhcp-agent
     - neutron-metadata-agent
 
-- name: Neutron.conf
+- name: Config neutron
   ansible.builtin.template:
     src: ./templates/neutron.conf
     dest: /etc/neutron/neutron.conf
@@ -19,7 +19,7 @@
     group: neutron
     mode: '0644'
 
-- name: ml2_conf.ini
+- name: Config ml2_conf
   ansible.builtin.template:
     src: ./templates/ml2_conf.ini
     dest: /etc/neutron/plugins/ml2/ml2_conf.ini
@@ -33,7 +33,7 @@
     - modprobe br_netfilter
     - sh -c 'echo "br_netfilter" > /etc/modules-load.d/br_netfilter.conf'
 
-- name: Config linuxbridge_agent.ini
+- name: Config linuxbridge_agent
   ansible.builtin.template:
     src: ./templates/linuxbridge_agent.ini
     dest: /etc/neutron/plugins/ml2/linuxbridge_agent.ini
@@ -41,7 +41,7 @@
     group: neutron
     mode: '0644'
 
-- name: Config l3_agent.ini
+- name: Config l3_agent
   ansible.builtin.template:
     src: ./templates/l3_agent.ini
     dest: /etc/neutron/l3_agent.ini
@@ -49,7 +49,7 @@
     group: neutron
     mode: '0644'
 
-- name: Config dhcp_agent.ini
+- name: Config dhcp_agent
   ansible.builtin.template:
     src: ./templates/dhcp_agent.ini
     dest: /etc/neutron/dhcp_agent.ini
@@ -57,7 +57,7 @@
     group: neutron
     mode: '0644'
 
-- name: Config linuxbridge_agent.ini
+- name: Config metadata_agent
   ansible.builtin.template:
     src: ./templates/metadata_agent.ini
     dest: /etc/neutron/metadata_agent.ini
