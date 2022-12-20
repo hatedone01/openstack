@@ -1,0 +1,41 @@
+---
+- name: Install cinder-api
+  ansible.builtin.apt:
+    name: cinder-api
+    state: present
+
+- name: Install cinder-scheduler
+  ansible.builtin.apt:
+    name: cinder-scheduler
+    state: present
+
+- name: Config cinder
+  ansible.builtin.template:
+    src: ./templates/cinder.conf
+    dest: /etc/cinder/cinder.conf
+    owner: root
+    group: cinder
+    mode: '0644'
+
+- name: Populate the Block Storage database
+  command: su -s /bin/sh -c "cinder-manage db sync" cinder
+
+- name: Restart cinder and apache2 services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - cinder-scheduler
+    - apache2
+
+- name: Include cinder-compute role
+  include_role:
+    name: cinder-compute
+    apply:
+      delegate_to: "{{ item }}"
+  with_items: "{{ groups['storages'] }}"
+
+#- name: Remove /etc/environment
+#  ansible.builtin.file:
+#    path: /etc/environment
+#    state: absent
