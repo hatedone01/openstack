@@ -86,8 +86,3 @@
     - neutron-dhcp-agent
     - neutron-metadata-agent
     - neutron-l3-agent
-
-- name: Remove /etc/environment
-  ansible.builtin.file:
-    path: /etc/environment
-    state: absent

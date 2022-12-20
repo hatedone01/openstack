@@ -85,6 +85,7 @@
     - openstack user create --domain default --password {{ PLACEMENT_PASS }} placement
     - openstack user create --domain default --password {{ NOVA_PASS }} nova
     - openstack user create --domain default --password {{ NEUTRON_PASS }} neutron
+    - openstack user create --domain default --password {{ CINDER_PASS }} cinder
   register: users
 
 - name: Print user
@@ -108,6 +109,7 @@
     - openstack role add --project service --user placement admin
     - openstack role add --project service --user nova admin
     - openstack role add --project service --user neutron admin
+    - openstack role add --project service --user cinder admin
 
 - name: Create services entity
   command: "{{ item }}" 
@@ -116,6 +118,7 @@
     - openstack service create --name placement --description "Placement API" placement
     - openstack service create --name nova --description "OpenStack Compute" compute
     - openstack service create --name neutron --description "OpenStack Networking" network
+    - openstack service create --name cinderv3 --description "OpenStack Block Storage" volumev3
   register: services
 
 - name: Print services 
@@ -137,6 +140,9 @@
     - openstack endpoint create --region {{ REGION }} network public http://{{ NEUTRON_DNS }}:9696
     - openstack endpoint create --region {{ REGION }} network internal http://{{ NEUTRON_DNS }}:9696
     - openstack endpoint create --region {{ REGION }} network admin http://{{ NEUTRON_DNS }}:9696
+    - openstack endpoint create --region {{ REGION }} volumev3 public http://{{ CINDER_DNS }}:8776/v3/%\(project_id\)s
+    - openstack endpoint create --region {{ REGION }} volumev3 internal http://{{ CINDER_DNS }}:8776/v3/%\(project_id\)s
+    - openstack endpoint create --region {{ REGION }} volumev3 admin http://{{ CINDER_DNS }}:8776/v3/%\(project_id\)s
   register: services
 
 - name: Print roles

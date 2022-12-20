@@ -11,6 +11,7 @@
     - PLACEMENT_DNS: controller01
     - NOVA_DNS: controller01
     - NEUTRON_DNS: controller01
+    - CINDER_DNS: controller01
 #Mariadb
     - DB_ROOT_PASS: Password1
     - DB_USER: rasmus
@@ -47,6 +48,7 @@
     - METADATA_SECRET: METADATA_SECRET
 #Cinder
     - CINDER_DB_PASS: CINDER_DB_PASS
+    - CINDER_PASS: CINDER_PASS
   roles:
 #    - mariadb
 #    - memcaches
@@ -57,4 +59,4 @@
     - placement
     - nova-controller
     - neutron-controller
-#    - cinder-controller
+    - cinder-controller
