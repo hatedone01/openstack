@@ -1,16 +1,19 @@
 ---
 - name: Install cinder-api
-  ansible.builtin.apt:
-    name: cinder-api
+  apt:
+    name: "{{ item }}"
     state: present
+  with_items:
+    - cinder-api
+    - cinder-scheduler
 
-- name: Install cinder-scheduler
-  ansible.builtin.apt:
-    name: cinder-scheduler
-    state: present
+#- name: Install cinder-scheduler
+#  ansible.builtin.apt:
+#    name: cinder-scheduler
+#    state: present
 
 - name: Config cinder
-  ansible.builtin.template:
+  template:
     src: ./templates/cinder.conf
     dest: /etc/cinder/cinder.conf
     owner: root
@@ -21,7 +24,7 @@
   command: su -s /bin/sh -c "cinder-manage db sync" cinder
 
 - name: Restart cinder and apache2 services
-  ansible.builtin.service:
+  service:
     name: "{{ item }}"
     state: restarted
   with_items:
@@ -35,6 +38,29 @@
       delegate_to: "{{ item }}"
   with_items: "{{ groups['storages'] }}"
 
+- name: List volumes
+  command: openstack volume service list
+  register: volumes
+
+- name: Print list volumes
+  debug:
+    msg: "{{ volumes.results }}"
+
+- name: Create volumes
+  command: openstack volume create --size 10 test-volume 
+  register: volume_create
+
+- name: Print create volumes
+  debug:
+    msg: "{{ volume_create }}"
+
+- name: List volume
+  command: openstack volume lsit
+  register: list_volumes
+
+- name: Show list of volumes
+  debug:
+    msg: "{{ list_volumes }}"
 #- name: Remove /etc/environment
 #  ansible.builtin.file:
 #    path: /etc/environment
