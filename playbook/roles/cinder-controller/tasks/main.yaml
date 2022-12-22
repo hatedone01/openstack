@@ -7,11 +7,6 @@
     - cinder-api
     - cinder-scheduler
 
-#- name: Install cinder-scheduler
-#  ansible.builtin.apt:
-#    name: cinder-scheduler
-#    state: present
-
 - name: Config cinder
   template:
     src: ./templates/cinder.conf
@@ -55,7 +50,7 @@
     msg: "{{ volume_create }}"
 
 - name: List volume
-  command: openstack volume lsit
+  command: openstack volume list
   register: list_volumes
 
 - name: Show list of volumes
