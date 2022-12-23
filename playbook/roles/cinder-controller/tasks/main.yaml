@@ -39,7 +39,7 @@
 
 - name: Print list volumes
   debug:
-    msg: "{{ volumes.results }}"
+    msg: "{{ volumes.stdout }}"
 
 - name: Create volumes
   command: openstack volume create --size 10 test-volume 
@@ -47,7 +47,7 @@
 
 - name: Print create volumes
   debug:
-    msg: "{{ volume_create }}"
+    msg: "{{ volume_create.stdout }}"
 
 - name: List volume
   command: openstack volume list
@@ -55,7 +55,7 @@
 
 - name: Show list of volumes
   debug:
-    msg: "{{ list_volumes }}"
+    msg: "{{ list_volumes.stdout }}"
 #- name: Remove /etc/environment
 #  ansible.builtin.file:
 #    path: /etc/environment
