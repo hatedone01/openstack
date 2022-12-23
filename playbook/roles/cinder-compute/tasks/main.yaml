@@ -25,11 +25,11 @@
 - name: Create the LVM volume group cinder-volumes
   command: vgcreate cinder-volumes /dev/sdb
 
-- name: 
+- name: Config lvm
   lineinfile:
     path: "/etc/lvm/lvm.conf"
     insertafter: '^\s*devices {\s*$'
-    line: '      filter = [ "a/sda/", "a/sdb/", "r/.*/"]'
+    line: '      filter = [ "a/sdb/", "r/.*/"]'
 
 - name: Config nova-compute
   ansible.builtin.template:
