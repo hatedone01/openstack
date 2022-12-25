@@ -59,4 +59,4 @@
     - placement
     - nova-controller
     - neutron-controller
-    - cinder-controller
+#    - cinder-controller
