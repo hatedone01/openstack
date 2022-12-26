@@ -54,9 +54,10 @@
 #    - memcaches
 #    - rabbitmq
 #    - etcd
-    - keystone
-    - glance
-    - placement
-    - nova-controller
-    - neutron-controller
+#    - keystone
+#    - glance
+#    - placement
+#    - nova-controller
+#    - neutron-controller
 #    - cinder-controller
+    - horizon
