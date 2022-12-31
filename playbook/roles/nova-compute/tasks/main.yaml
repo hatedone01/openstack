@@ -1,7 +1,7 @@
 ---
-- name: Update repo
-  ansible.builtin.apt:
-    update_cache: yes
+#- name: Update repo
+#  ansible.builtin.apt:
+#    update_cache: yes
 
 - name: Install nova-compute
   ansible.builtin.apt:
